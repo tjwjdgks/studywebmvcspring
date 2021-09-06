@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 // spring boot 4.3 이상 추천
-@Controller // web mvc controller 역할
+@Controller // web mvc cont
+// roller 역할
 public class EventController {
 
     @Autowired
