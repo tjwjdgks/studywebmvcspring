@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Handle</title>
+</head>
+<body>
+<form action="#" th:action="@{/from/user/id}" method="post" th:object="${multiForm}">
+    <input type="text" title="id" th:field="*{id}"/>
+    <input type="submit" value="Create"/>
+</form>
+</body>
+</html>
