@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.notNullValue;
@@ -62,5 +63,18 @@ class FormControllerTest {
         Object userForm = request.getSession().getAttribute("userForm");
         System.out.println(userForm );
 
+    }
+
+    // xpath
+    //https://www.w3schools.com/xml/xpath_syntax.asp
+    //https://www.freeformatter.com/xpath-tester.html#ad-output
+    @Test
+    public void getForm() throws Exception {
+        mockMvc.perform(get("/form/list")
+                    .sessionAttr("visitTime", LocalDateTime.now())
+                    .flashAttr("flash","seo"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(xpath("//p").nodeCount(1));
     }
 }

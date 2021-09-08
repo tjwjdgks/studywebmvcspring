@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <title>Create New Handle</title>
 </head>
 <body>
-<form action="#" th:action="@{/from/user/id}" method="post" th:object="${multiForm}">
+<form action="#" th:action="@{/form/id}" method="post" th:object="${multiform}">
+    <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}">Incorrect date</p>
     <input type="text" title="id" th:field="*{id}"/>
     <input type="submit" value="Create"/>
 </form>

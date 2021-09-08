@@ -2,6 +2,7 @@ package me.seo.studywebmvc.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter @Setter
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
+    @NotBlank
     private String name;
 
     private int limitOfEnrollment;

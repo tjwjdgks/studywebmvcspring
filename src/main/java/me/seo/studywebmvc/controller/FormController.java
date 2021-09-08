@@ -7,14 +7,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 //@SessionAttributes("userForm") // 이 이름에 해당하는 modelAttribute를 넣어 준다 model.addAttribute("userForm",userForm);
-@SessionAttributes("multiForm")
+@SessionAttributes("multiform")
 public class FormController {
 
     @GetMapping("/form/posting")
@@ -43,10 +46,20 @@ public class FormController {
         model.addAttribute("formList",formList);
         return "redirect:/form/list";
     }
-
+    // SessionAttribute 예시
     @GetMapping("/form/list")
-    public String getFromList(Model model){
+    public String getFromList(Model model, @SessionAttribute LocalDateTime visitTime /*,HttpSession session*/){
+        // flash example 예시
+        // flashAttributes로 들어오는 값은 model에 들어 있다
+        String name = (String) model.asMap().get("flash");
+        System.out.println(name);
+
+
+        // VisitTimeInterceptor에서 넣어 준 session 꺼낼 수 있음
+        // http session도 가능
+        //LocalDateTime visitTimeHttp = (LocalDateTime) session.getAttribute("visitTime");
         // db 사용시 읽어 올 값
+        System.out.println(visitTime);
         UserForm userForm = new UserForm();
         userForm.setName("db");
         userForm.setId(1);
@@ -68,34 +81,68 @@ public class FormController {
         // 특정한 폼처리가 끝났을 때 sessionStatus을 통해 처리 완료를 할려 줄 수 있음
         // sessionStatus.setComplete(); // 폼 처리 끝나고 세션을 비울 때 사용한다
         model.addAttribute("userForm",userForm);
-        httpSession.setAttribute("userForm",userForm);
+        // httpSession 가능
+        //httpSession.setAttribute("userForm",userForm);
         return "/form/posting";
     }
+
+
     // multiform
+    // @SessionAttributes의 파라미터와 같은 이름이 @ModelAttribute에 있을 경우 세션에 있는 객체를 가져온 후, 클라이언트로 전송받은 값을 설정합니다.
+
     @GetMapping("/form/name")
     public String getMutiName(Model model){
-        model.addAttribute("multiForm",new UserForm());
+        model.addAttribute("multiform",new UserForm());
         return "/form/name";
     }
+
     @PostMapping("/form/name")
-    public String postMutiName(@Validated @ModelAttribute UserForm multiForm,BindingResult bindingResult){
-        System.out.println(multiForm.getName());
+    public String postMutiName(@Validated @ModelAttribute(value="multiform") UserForm multiform,BindingResult bindingResult){
+        System.out.println(multiform.getName());
         if(bindingResult.hasErrors())
             return "/form/name";
 
-        return "redirect:/form/user/id";
+        return "redirect:/form/id";
     }
-    @GetMapping("/form/user/id")
-    public String getMutiId(@ModelAttribute UserForm multiForm, Model model){
-        System.out.println(multiForm.getName());
-        model.addAttribute("multiForm",multiForm);
+    @GetMapping("/form/id")
+    public String getMutiId(@ModelAttribute(value = "multiform") UserForm multiform,Model model){
+        System.out.println(multiform.getName());
+        model.addAttribute("multiform",multiform);
         return "/form/userid";
     }
-    @PostMapping("/form/user/id")
-    public String posttMutiId(@Validated @ModelAttribute UserForm multiForm,BindingResult bindingResult,SessionStatus sessionStatus){
+
+    @PostMapping("/form/id")
+    public String posttMutiId(@Validated @ModelAttribute(value = "multiform")  UserForm multiform,BindingResult bindingResult,SessionStatus sessionStatus){
         if(bindingResult.hasErrors())
             return "/form/userid";
         sessionStatus.setComplete();
+        return "redirect:/form/list";
+    }
+
+    // RedirectAttributes
+    @ResponseBody
+    @GetMapping("/form/redirectexample")
+                                                     // Model model
+    public String example(@PathVariable String name, RedirectAttributes attributes){
+        // model의 경우
+        // model.addAttribute("name", name);
+        // spring webmvc 자동으로 model의 primitive type data는 query로 날라간다
+        // ex) 예시 이런식으로.. return "redirect:/form/list?name={name}";
+        // spring boot 경우 properties로 추가해줄 수 있음, 자동 아님
+
+        // 원하는 값만 redirect로 보내고 싶을 경우
+        // 명시 된 것들만 query 파라미터로 url 전달 된다
+        // uri path에 붙기 때무에 String으로 변환이 가능해야한다
+        attributes.addAttribute("name",name);
+        return "redirect:/form/list";
+    }
+
+    //
+    @GetMapping("/form/flashexample/{name}")
+    public String example2(@PathVariable String name, RedirectAttributes attributes){
+        attributes.addFlashAttribute("flash",name); // http session에 들어간다
+        // redirect한 요청이 처리되면 data는 세션에서 제거된다
+        // reidrect한 요청은 model로 들어온다
         return "redirect:/form/list";
     }
 }
