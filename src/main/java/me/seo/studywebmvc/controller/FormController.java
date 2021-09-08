@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -19,6 +20,36 @@ import java.util.List;
 //@SessionAttributes("userForm") // 이 이름에 해당하는 modelAttribute를 넣어 준다 model.addAttribute("userForm",userForm);
 @SessionAttributes("multiform")
 public class FormController {
+
+    /*
+    @InitBinder("userForm") // 안에 문자 있는 경우  그 이름의 modelAttribute를 바인딩 받을 때만 사용 가능   // return void 여야 한다
+    //WebDataBinder는 반드시 있어야한다, 모든 요청전에 initFormBinder 호출
+    // 바인딩 설정, 포매터 설정, Vaildator 설정 가능
+    public void initFormBinder(WebDataBinder webDataBinder){
+        webDataBinder.setDisallowedFields("id"); // id를 바인딩 하지 않음 // 입력 받지 않을 필드 입력
+        webDataBinder.setAllowedFields("name"); // 입력받고 싶은 필드 바인딩
+
+    }
+
+     */
+
+
+
+    // 컨트롤러 안에서 공통적인 참고해야하는 모델 정보 라면
+    // 모든 뷰에서 categories 참고 할때
+    @ModelAttribute
+    public void categories(Model model){
+        model.addAttribute("categories", List.of("study","seminar","social"));
+    }
+    /* 이건도 가능
+    @ModelAttribute("categories")
+    public List<String> categories2(Model model){
+        return List.of("study","seminar","social");
+    }
+
+     */
+
+
 
     @GetMapping("/form/posting")
     public String formPosting(Model model){

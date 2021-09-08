@@ -75,6 +75,7 @@ class FormControllerTest {
                     .flashAttr("flash","seo"))
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("categories")) // 카테고리 key modelAttribute가 있는지 확인
                 .andExpect(xpath("//p").nodeCount(1));
     }
 }

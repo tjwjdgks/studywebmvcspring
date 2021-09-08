@@ -16,6 +16,8 @@ import java.util.logging.Handler;
 @Controller
 public class HandlerController {
 
+
+
     // uri 패턴
     @GetMapping("/handle/{id}")
     @ResponseBody
